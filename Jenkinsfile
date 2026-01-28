@@ -17,8 +17,7 @@ pipeline{
 
 	stage('Deploy') {
 	steps {
-	    bat
-	    '''docker stop ci-cd-container || echo not running
+	    bat '''docker stop ci-cd-container || echo not running
         docker rm ci-cd-container || echo not present
         docker run --name ci-cd-container ci-cd-demo
 	'''
