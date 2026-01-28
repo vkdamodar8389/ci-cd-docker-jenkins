@@ -14,6 +14,13 @@ pipeline {
 
             }
         }
+
+	stage('Docker run') {
+	steps {
+	    bat 'docker run ci-cd-demo'
+	    }
+
+	   } 
     }
 }
 
