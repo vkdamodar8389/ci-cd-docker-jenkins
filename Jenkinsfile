@@ -1,4 +1,4 @@
-pipeline {
+pipeline{
     agent any
 
     stages {
@@ -15,9 +15,13 @@ pipeline {
             }
         }
 
-	stage('Docker run') {
+	stage('Deploy') {
 	steps {
-	    bat 'docker run ci-cd-demo'
+	    bat
+	    '''docker stop ci-cd-container || echo not running
+        docker rm ci-cd-container || echo not present
+        docker run --name ci-cd-container ci-cd-demo
+	'''
 	    }
 
 	   } 
