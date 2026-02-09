@@ -4,24 +4,22 @@ pipeline {
     parameters {
         choice(
             name: 'DEPLOY_ENV',
-            choices: ['dev', 'qa', 'prod'],
-            description: 'Select environment to deploy'
-        )
-
-        booleanParam(
-            name: 'RUN_DEPLOY',
-            defaultValue: true,
-            description: 'Enable deployment stage'
+            choices: ['dev', 'qa'],
+            description: 'Select environment'
         )
     }
 
     stages {
-        stage('Print Parameters') {
+
+        stage('Build') {
             steps {
-                bat """
-                echo Environment Selected: %DEPLOY_ENV%
-                echo Deployment Enabled: %RUN_DEPLOY%
-                """
+                bat "echo Building application..."
+            }
+        }
+
+        stage('Auto Deploy') {
+            steps {
+                bat "echo Auto deploying to %DEPLOY_ENV% environment"
             }
         }
     }
