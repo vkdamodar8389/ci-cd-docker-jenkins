@@ -2,30 +2,37 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "ci-cd-docker-jenkins"
-        DEPLOY_ENV = "dev"
+        IMAGE_NAME = "ci-cd-demo"
+        CONTAINER  = "ci-cd-container"
     }
 
     stages {
-        stage('CI Check') {
+
+        stage('CI') {
             steps {
-                echo 'CI pipeline is running'
+                echo "CI running"
             }
         }
 
-        stage('Docker Build') {
+        stage('Build') {
             steps {
-                bat 'docker build -t ci-cd-demo .'
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
 
         stage('Deploy') {
             steps {
-                withCredentials([string(credentialsId: 'demo-secret', variable: 'DEPLOY_TOKEN')]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'demo-secret',
+                        usernameVariable: 'USER',
+                        passwordVariable: 'PASS'
+                    )
+                ]) {
                     bat '''
-                    docker stop ci-cd-container || echo not running
-                    docker rm ci-cd-container || echo not present
-                    docker run --name ci-cd-container ci-cd-demo
+                    docker stop %CONTAINER% || echo not running
+                    docker rm %CONTAINER% || echo not present
+                    docker run -d --name %CONTAINER% %IMAGE_NAME%
                     '''
                 }
             }
