@@ -17,7 +17,7 @@ pipeline {
             }
         }
 
-        stage('Auto Deploy') {
+        stage('Auto Deployment in jenkins') {
             steps {
                 bat "echo Auto deploying to %DEPLOY_ENV% environment"
             }
