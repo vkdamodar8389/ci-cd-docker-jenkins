@@ -30,7 +30,7 @@ pipeline {
 
         stage('Manual Approval (PROD)') {
             when {
-                expression { params.DEPLOY_ENV == 'prod' }
+                expression { params.DEPLOY_ENV?.toString() == 'prod' }
             }
             steps {
                 input message: 'Approve PROD deployment?', ok: 'Deploy'
@@ -39,7 +39,7 @@ pipeline {
 
         stage('Deploy to PROD') {
             when {
-                expression { params.DEPLOY_ENV == 'prod' }
+                expression { params.DEPLOY_ENV?.toString() == 'prod' }
             }
             steps {
                 bat "echo Deploying to PROD environment"
