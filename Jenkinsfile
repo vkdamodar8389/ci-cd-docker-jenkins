@@ -1,40 +1,27 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "ci-cd-demo"
-        CONTAINER  = "ci-cd-container"
+    parameters {
+        choice(
+            name: 'DEPLOY_ENV',
+            choices: ['dev', 'qa', 'prod'],
+            description: 'Select environment to deploy'
+        )
+
+        booleanParam(
+            name: 'RUN_DEPLOY',
+            defaultValue: true,
+            description: 'Enable deployment stage'
+        )
     }
 
     stages {
-
-        stage('CI') {
+        stage('Print Parameters') {
             steps {
-                echo "CI running"
-            }
-        }
-
-        stage('Build') {
-            steps {
-                bat "docker build -t %IMAGE_NAME% ."
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'demo-secret',
-                        usernameVariable: 'USER',
-                        passwordVariable: 'PASS'
-                    )
-                ]) {
-                    bat '''
-                    docker stop %CONTAINER% || echo not running
-                    docker rm %CONTAINER% || echo not present
-                    docker run -d --name %CONTAINER% %IMAGE_NAME%
-                    '''
-                }
+                bat """
+                echo Environment Selected: %DEPLOY_ENV%
+                echo Deployment Enabled: %RUN_DEPLOY%
+                """
             }
         }
     }
