@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to PROD') {
+        stage('Deploy to PRODUCTION') {
             when {
                 expression { params.DEPLOY_ENV?.toString() == 'prod' }
             }
