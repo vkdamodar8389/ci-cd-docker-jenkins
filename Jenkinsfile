@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "yourdockerhubusername/myapp"
+        IMAGE_NAME = "vkdamodar8389/myapp"
         IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
@@ -19,7 +19,7 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'vkdamodar8389',
+                    credentialsId: 'dockerhub-creds',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
