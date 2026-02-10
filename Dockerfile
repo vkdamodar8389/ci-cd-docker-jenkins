@@ -1,3 +1,4 @@
-FROM alpine
-CMD ["echo", "CI Docker build successful"]
+FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/index.html
+
 
