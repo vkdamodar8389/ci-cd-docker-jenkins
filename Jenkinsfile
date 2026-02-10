@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Push Image to Docker Hub') {
+        stage('Push Image to Docker Hub by Vinay') {
             steps {
                 bat """
                 docker push %IMAGE_NAME%:%IMAGE_TAG%
