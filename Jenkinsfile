@@ -1,48 +1,40 @@
 pipeline {
     agent any
 
-    parameters {
-        choice(
-            name: 'DEPLOY_ENV',
-            choices: ['dev', 'qa', 'prod'],
-            description: 'Select environment'
-        )
+    environment {
+        IMAGE_NAME = "yourdockerhubusername/myapp"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                bat "echo Building application..."
+                bat """
+                docker build -t %IMAGE_NAME%:%IMAGE_TAG% .
+                """
             }
         }
 
-        stage('Auto Deploy (DEV / QA)') {
-            when {
-                expression {
-                    params.DEPLOY_ENV == 'dev' || params.DEPLOY_ENV == 'qa'
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat """
+                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+                    """
                 }
             }
-            steps {
-                bat "echo Auto deploying to %DEPLOY_ENV% environment"
-            }
         }
 
-        stage('Manual Approval (PROD)') {
-            when {
-                expression { params.DEPLOY_ENV?.toString() == 'prod' }
-            }
+        stage('Push Image to Docker Hub') {
             steps {
-                input message: 'Approve PROD deployment?', ok: 'Deploy'
-            }
-        }
-
-        stage('Deploy to PRODUCTION') {
-            when {
-                expression { params.DEPLOY_ENV?.toString() == 'prod' }
-            }
-            steps {
-                bat "echo Deploying to PROD environment"
+                bat """
+                docker push %IMAGE_NAME%:%IMAGE_TAG%
+                """
             }
         }
     }
